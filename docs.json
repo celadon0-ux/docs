@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Mint Starter Kit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#854D96",
+    "light": "#D9A2E8",
+    "dark": "#341C3B"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -44,11 +44,11 @@
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Interview Endpoints",
             "pages": [
-              "api-reference/Interviews/get",
-              "api-reference/Interviews/create",
-              "api-reference/Interviews/delete"
+              "api/interviews/get",
+              "api/interviews/create",
+              "api/interviews/delete"
             ]
           }
         ]
@@ -82,13 +82,13 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@useresonant.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Resonant Dashboard",
+      "href": "https://useresonant.com/dashboard/home"
     }
   },
   "footer": {
