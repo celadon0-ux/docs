@@ -1,0 +1,165 @@
+---
+title: "Create Interview"
+openapi: "POST /plants"
+description: "Creates a new interview session with a specified agent. This endpoint requires an active subscription and a valid API key with the `create_interview` permission."
+---
+
+**Endpoint:** `POST /api/v1/interviews`
+
+## Request Body
+
+| Parameter         | Type   | Required | Description                                                                                                                            |
+| ----------------- | ------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| agent\_id         | string | yes      | ID of the agent to conduct the interview. This can be retrieved through the get agents API route or the agents page in your dashboard. |
+| interviewee\_name | string | yes      | Name of the person being interviewed. 255 characters max.                                                                              |
+| duration          | int    | yes      | Duration of the interview in minutes. A number between 5 and 60.                                                                       |
+
+## Responses
+
+### Success Response
+
+**Code:** 200 OK
+
+```json
+{
+  "id": "uuid",
+  "agent_id": "uuid",
+  "interviewee_name": "string",
+  "duration": number,
+  "user_id": "uuid",
+  "completed": false,
+  "session_active": false,
+  "created_at": "timestamp",
+  "interview_link": "string"
+}
+```
+
+The \`interview\_link\` property contains the URL that can be used to join the interview.
+
+### Error Responses
+
+**Invalid API Key**
+
+**Code:** 401 UNAUTHORIZED
+
+```json
+{ "error": "Invalid API key" }
+```
+
+\*\*Missing Permission\*\*
+
+\- \*\*Code:\*\* 403 FORBIDDEN
+
+\- \*\*Content:\*\* \`\{ "error": "Missing required permission: create\_interview" }\`
+
+\*\*Inactive Subscription\*\*
+
+\- \*\*Code:\*\* 403 FORBIDDEN
+
+\- \*\*Content:\*\* \`\{ "error": "Active subscription required" }\`
+
+\*\*Missing or Invalid Fields\*\*
+
+\- \*\*Code:\*\* 400 BAD REQUEST
+
+\- \*\*Content:\*\*
+
+\`\`\`json
+
+\{
+
+&#x20; "error": "Missing or invalid required fields: agent\_id, interviewee\_name, duration",
+
+&#x20; "details": \{
+
+&#x20;   "agent\_id": "Required",
+
+&#x20;   "interviewee\_name": "Required",
+
+&#x20;   "duration": "Must be between 1-120 minutes"
+
+&#x20; }
+
+}
+
+\`\`\`
+
+\*\*Invalid Agent ID\*\*
+
+\- \*\*Code:\*\* 403 FORBIDDEN
+
+\- \*\*Content:\*\* \`\{ "error": "Invalid or unauthorized agent\_id" }\`
+
+\*\*Database Errors\*\*
+
+\- \*\*Code:\*\* 500 INTERNAL SERVER ERROR
+
+\- \*\*Content:\*\* \`\{ "error": "Failed to connect to database" }\` or \`\{ "error": "Failed to create interview" }\`
+
+\*\*Server Error\*\*
+
+\- \*\*Code:\*\* 500 INTERNAL SERVER ERROR
+
+\- \*\*Content:\*\* \`\{ "error": "Internal server error" }\`
+
+\## Example
+
+\### Request
+
+\`\`\`http
+
+POST /api/v1/interviews
+
+Content-Type: application/json
+
+Authorization: Bearer your-api-key
+
+\{
+
+&#x20; "agent\_id": "550e8400-e29b-41d4-a716-446655440000",
+
+&#x20; "interviewee\_name": "John Doe",
+
+&#x20; "duration": 30
+
+}
+
+\`\`\`
+
+### Success Response
+
+\`\`\`json
+
+\{
+
+&#x20; "id": "a3c65c70-5233-471f-80c5-663c04bfc3b0",
+
+&#x20; "agent\_id": "550e8400-e29b-41d4-a716-446655440000",
+
+&#x20; "interviewee\_name": "John Doe",
+
+&#x20; "duration": 30,
+
+&#x20; "user\_id": "8fa8f39c-82f1-47a5-a316-c2f86a711a72",
+
+&#x20; "completed": false,
+
+&#x20; "session\_active": false,
+
+&#x20; "created\_at": "2023-07-25T14:30:00Z",
+
+&#x20; "interview\_link": "https://example.com/interview-client/a3c65c70-5233-471f-80c5-663c04bfc3b0"
+
+}
+
+\`\`\`
+
+\## Notes
+
+\- String fields are trimmed and limited to 255 characters.
+
+\- Duration is constrained to be between 5 and 60 minutes.
+
+\- The API verifies that the agent belongs to the authenticated user before creating the interview.
+
+\- An active subscription is required to create interviews.&#x20;
