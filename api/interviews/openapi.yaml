@@ -1,0 +1,147 @@
+openapi: 3.0.0
+info:
+  title: Resonant API - Interviews
+  description: API endpoints for managing interview sessions
+  version: 1.0.0
+  
+paths:
+  /api/v1/interviews:
+    post:
+      summary: Create a new interview session
+      description: Creates a new interview session with the specified agent and interviewee
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - agent_id
+                - interviewee_name
+                - duration
+              properties:
+                agent_id:
+                  type: string
+                  description: ID of the agent to conduct the interview
+                  example: "550e8400-e29b-41d4-a716-446655440000"
+                interviewee_name:
+                  type: string
+                  description: Name of the person being interviewed
+                  maxLength: 255
+                  example: "John Doe"
+                duration:
+                  type: number
+                  description: Duration of the interview in minutes (limited to 5-60 minutes)
+                  minimum: 5
+                  maximum: 60
+                  example: 30
+      responses:
+        '200':
+          description: Interview successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier for the interview
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  agent_id:
+                    type: string
+                    description: ID of the agent conducting the interview
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  interviewee_name:
+                    type: string
+                    description: Name of the person being interviewed
+                    example: "John Doe"
+                  duration:
+                    type: number
+                    description: Duration of the interview in minutes
+                    example: 30
+                  user_id:
+                    type: string
+                    description: ID of the user who created the interview
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  completed:
+                    type: boolean
+                    description: Whether the interview has been completed
+                    example: false
+                  session_active:
+                    type: boolean
+                    description: Whether the interview session is currently active
+                    example: false
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: Timestamp when the interview was created
+                    example: "2023-01-01T12:00:00Z"
+                  interview_link:
+                    type: string
+                    description: URL for the interviewee to join the interview
+                    example: "https://useresonant.com/interview-client/550e8400-e29b-41d4-a716-446655440000"
+        '400':
+          description: Bad request - missing or invalid required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid required fields: agent_id, interviewee_name, duration"
+                  details:
+                    type: object
+                    properties:
+                      agent_id:
+                        type: string
+                        nullable: true
+                        example: "Required"
+                      interviewee_name:
+                        type: string
+                        nullable: true
+                        example: "Required"
+                      duration:
+                        type: string
+                        nullable: true
+                        example: "Must be between 1-120 minutes"
+        '401':
+          description: Unauthorized - invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid API key"
+        '403':
+          description: Forbidden - insufficient permissions or invalid agent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required permission: create_interview"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API key with format 'Bearer YOUR_API_KEY'
